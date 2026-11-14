@@ -1,21 +1,28 @@
-MIT License
-
+Xanto's Bulletin Board
 Copyright (c) 2026 Franz Lorek (Xanto)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This work (code, images, texts) is licensed under the
+Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Full license text: https://creativecommons.org/licenses/by-nc/4.0/legalcode
+Summary:           https://creativecommons.org/licenses/by-nc/4.0/
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+You are free to:
+  - Share: copy and redistribute the material in any medium or format
+  - Adapt: remix, transform, and build upon the material
+
+Under the following terms:
+  - Attribution: you must give appropriate credit to Franz Lorek (Xanto),
+    provide a link to the license, and indicate if changes were made.
+  - NonCommercial: you may not use the material for commercial purposes,
+    i.e. you may not sell it or redistribute it for payment or other
+    commercial advantage.
+
+Clarification by the author (not a further restriction): using the module at
+your own table is always allowed, including paid game sessions. Selling the
+module itself, or commercially redistributing it, is not.
+
+Third-party components keep their own licenses. See CREDITS.md and the
+license files in the fonts/ folder (SIL OFL 1.1, Apache 2.0, CC BY 3.0).
+
+The material is provided "as is", without warranty of any kind.

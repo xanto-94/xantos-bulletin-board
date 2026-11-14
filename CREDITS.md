@@ -1,6 +1,6 @@
 # Credits & Lizenzen
 
-Modul: **Xanto** (Franz Lorek), MIT-Lizenz (`LICENSE`).
+Modul: **Xanto** (Franz Lorek), Lizenz CC BY-NC 4.0 (`LICENSE`).
 
 ## Grafiken
 Bretter, Zettel und Siegel: von Xanto mit **Midjourney** erstellt (bezahltes Abo) und für dieses Modul freigestellt.

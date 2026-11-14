@@ -80,4 +80,9 @@ A visual bulletin board. Open it from the Journal tab, pin notes (paper template
 - Umschlag und Papiervogel als Zettelformen – in 0.7.0 wieder entfernt.
 
 ## Autor & Lizenz
-Made by **Xanto** (Franz Lorek) – MIT-Lizenz, siehe `LICENSE`. Danksagungen für Schriften, Icons und Grafiken in `CREDITS.md`.
+Made by **Xanto** (Franz Lorek).
+
+Lizenz: **CC BY-NC 4.0** (Namensnennung, nicht kommerziell), siehe `LICENSE`. Du darfst das Modul nutzen, kopieren und verändern, wenn du Xanto nennst und es nicht kommerziell verwendest.
+Die Nutzung am eigenen Spieltisch ist immer erlaubt, auch in bezahlten Runden. Das Modul selbst zu verkaufen oder kommerziell weiterzuverbreiten ist nicht erlaubt.
+
+Danksagungen für Schriften, Icons und Grafiken in `CREDITS.md`. Die Schriften und Icons behalten ihre eigenen Lizenzen.
