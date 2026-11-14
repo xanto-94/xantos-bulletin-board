@@ -181,6 +181,11 @@ export class BoardApp extends ApplicationV2 {
         </div>
         ${board ? `
         <div class="sb-group">
+          <label class="sb-check sb-gmj" data-tooltip="${esc(t("gmj.tip"))}">
+            <input type="checkbox" data-field="gmJournal" ${board.gmJournal ? "checked" : ""}>
+            <span class="sb-box"><i class="fa-solid fa-check"></i></span>
+            <span class="sb-check-text">${esc(t("gmj.label"))}</span>
+          </label>
           ${sharedElsewhere ? `<span class="sb-status" data-tooltip="${esc(t("toolbar.sharedElsewhereHint"))}"><i class="fa-solid fa-circle-info"></i>${esc(t("toolbar.sharedElsewhere", { name: sharedElsewhere.name }))}</span>` : ""}
           <div class="sb-pub-wrap">
             <button type="button" class="sb-btn ${sharedHere ? "accent on" : ""}" data-action="togglePublish" aria-expanded="${this.pubOpen}">
@@ -669,6 +674,7 @@ export class BoardApp extends ApplicationV2 {
     const f = el.dataset.field;
     if (f === "board") { this.boardId = el.value; this.viewId = null; return this.render(); }
     if (!board) return;
+    if (f === "gmJournal") return void await upsertBoard({ ...board, gmJournal: !!el.checked });
     if (["name", "skin"].includes(f)) {
       const value = el.value.trim();
       if (f === "name" && !value) return this.render();

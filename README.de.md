@@ -32,7 +32,7 @@ Von Hand: Ordner `xantos-bulletin-board` nach `{Foundry-Benutzerdaten}/Data/modu
 | **Bretter** | Mehrere Bretter, fünf Aussehen (Taverne, Gildenhaus, Kontor, Adelshaus, Burg). Bei Taverne und Gildenhaus lässt sich der Name auf dem Schild ändern, das Schild verschieben und die Schrift verkleinern. |
 | **Zettel** | 8 Papiervorlagen oder ein eigenes Bild. Überschrift und Fließtext mit Schriftart, Größe, fett, kursiv, Ausrichtung und Trennlinie. Jeder Zettel kann einen eigenen **Namen** bekommen (erscheint im Journal der Spieler). |
 | **Wachssiegel** | Mit oder ohne Bänder, Symbol oder eigenes Bild. Symbol verschieben, Größe und Farbe ändern. |
-| **Zierde** | Linien, Zierlinien, Rahmen und Ecken. In Breite und Höhe frei ziehbar, ohne Verzerrung. |
+| **Farben** | Überschrift und Fließtext in Braun (Standard), Tintenblau, Blutrot oder einer eigenen Farbe. |
 | **Unterschriften** | Namen in Schreibschrift tippen oder mit der Maus selbst unterschreiben. |
 | **Bilder** | Beliebig viele Bilder auf dem Zettel, mit Ebenenmodi und Filtern, damit sie mit dem Papier verschmelzen. |
 | **Anordnung** | Frei platzieren, Größe ändern und drehen (±45°) direkt am Brett. |
@@ -42,6 +42,10 @@ Von Hand: Ordner `xantos-bulletin-board` nach `{Foundry-Benutzerdaten}/Data/modu
 - Das veröffentlichte Brett steht immer als Eintrag ganz oben im **Journal**.
 - Abgerissene Zettel hängen **darunter**. Wird das Brett zurückgezogen oder gelöscht, bekommen die Zettel einen Haken („erledigt“).
 - Die Kopien bleiben lesbar, auch wenn der SL den Zettel vom Brett nimmt.
+
+### SL-Journal und Werkzeugleiste
+- Mit dem Haken **Im Journal anzeigen (nur SL)** in der Werkzeugleiste des Bretts steht das Brett mit allen Zetteln in deinem eigenen Journal. Ein Klick auf einen Zettel öffnet ihn.
+- Ein **Knopf in der linken Werkzeugleiste** (bei den Token-Werkzeugen) öffnet das Brett. In den Moduleinstellungen lässt er sich abschalten.
 
 ## Veröffentlichen
 - **Veröffentlichen + öffnen** zeigt das Brett den gewählten Spielern sofort.

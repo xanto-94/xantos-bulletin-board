@@ -32,7 +32,7 @@ Manual install: copy the folder `xantos-bulletin-board` into `{Foundry user data
 | **Boards** | Several boards, five looks (tavern, guild hall, counting house, noble house, castle). On tavern and guild boards you can edit the name on the sign, move the sign and make its text smaller. |
 | **Notes** | 8 paper templates or your own image. Headline and body text with fonts, sizes, bold, italic, alignment and dividers. Every note can get its own **name** (shown in the players' journal). |
 | **Wax seals** | With or without ribbons, symbol or own image. Move, resize and recolour the symbol. |
-| **Decoration** | Lines, ornamental lines, frames and corners. Resize freely in width and height without distortion. |
+| **Colors** | Headline and body text in brown (default), ink blue, blood red or any custom color. |
 | **Signatures** | Type a name in a handwriting font or sign with the mouse. |
 | **Images** | Place any number of images on a note, with blend modes and filters so they melt into the paper. |
 | **Layout** | Free placement, resizing and rotation (±45°) directly on the board. |
@@ -42,6 +42,10 @@ Manual install: copy the folder `xantos-bulletin-board` into `{Foundry user data
 - The published board always appears as an entry at the top of their **Journal**.
 - Notes they tear off are listed **under that board**. When the board is unpublished or deleted, the notes get a ✔ ("done").
 - Their copies stay readable even if the GM removes the note from the board.
+
+### GM journal and toolbar
+- Tick **Show in Journal (GM only)** in the board toolbar to list the board with all its notes in your own Journal. Click a note to open it.
+- A **button in the left toolbar** (under the token controls) opens the board. You can switch it off in the module settings.
 
 ## Publish options
 - **Publish + open** shows the board to the chosen players immediately.

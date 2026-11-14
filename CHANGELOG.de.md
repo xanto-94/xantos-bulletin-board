@@ -2,6 +2,14 @@
 
 [English](CHANGELOG.md)
 
+## 0.8.0
+- **Ausrichtung** wirkt jetzt auf alle markierten Absätze, nicht nur auf den ersten.
+- **Textfarben:** Überschrift und Fließtext haben je eine Farbe: Braun (Standard), Tintenblau, Blutrot oder frei wählbar.
+- **Farbfelder** sind überall abgerundete Quadrate. Unterschriften nutzen dieselben drei Farben plus freie Wahl.
+- **Entfernt:** der Reiter „Zierde“ (Linien, Zierlinien, Rahmen, Ecken). Vorhandene Zierelemente auf Zetteln bleiben erhalten. Unterschriften bleiben.
+- **SL:** Ein Knopf in der linken Werkzeugleiste öffnet das Brett (in den Moduleinstellungen abschaltbar).
+- **SL-Journal:** Mit dem Haken „Im Journal anzeigen (nur SL)“ in der Werkzeugleiste stehen Brett und Zettel in deinem Journal.
+
 ## 0.7.0
 - **Zettel haben einen Namen** (Editor → Text → „Name des Zettels“). Er erscheint im Journal der Spieler und bei abgerissenen Zetteln. Leer = Überschrift, dann Vorlagenname.
 - **Brettfenster (SL)** passt sich dem Bildschirm an: öffnet sich so groß, dass Kopfzeile und Werkzeugleiste sichtbar bleiben, und wird zurückgeholt, wenn es oben oder unten herausragt.

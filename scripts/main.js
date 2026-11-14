@@ -1,7 +1,7 @@
 import { MODULE_ID, SKINS } from "./skins.js";
 import { t, LANGS, defaultLang } from "./i18n.js";
 import { esc } from "./note.js";
-import { getShare, shareAppliesTo, setShare, getBoard, getTaken, dropTaken, noteLabel } from "./data.js";
+import { getShare, shareAppliesTo, setShare, getBoard, getBoards, getTaken, dropTaken, noteLabel } from "./data.js";
 import { BoardApp } from "./board-app.js";
 import { NoteEditor } from "./editor-app.js";
 import { NoteViewer } from "./viewer-app.js";
@@ -35,9 +35,17 @@ function refreshViewers() {
   for (const app of NoteViewer.windows.values()) if (app.rendered) app.render();
 }
 
+/** Was der SL im Journal sieht (Bretter mit Haken samt Zettelnamen) – nur bei Änderung neu zeichnen. */
+function gmJournalKey() {
+  return JSON.stringify(getBoards().filter(b => b.gmJournal).map(b => [b.id, b.name, b.place, !!SKINS[b.skin]?.plate, b.notes.map(n => [n.id, noteLabel(n)])]));
+}
+let lastGmKey = "";
+
 function onBoardsChange() {
   BoardApp.instance?.refresh();
-  if (!game.user.isGM) { ui.journal?.render?.(); refreshViewers(); }
+  if (!game.user.isGM) { ui.journal?.render?.(); refreshViewers(); return; }
+  const key = gmJournalKey();
+  if (key !== lastGmKey) { lastGmKey = key; ui.journal?.render?.(); }
 }
 
 function showToGroup(boardId, noteId) {
@@ -66,6 +74,12 @@ Hooks.once("init", () => {
       ui.journal?.render?.();
     }
   });
+  game.settings.register(MODULE_ID, "showControl", {
+    name: t("setting.control.name"),
+    hint: t("setting.control.hint"),
+    scope: "client", config: true, type: Boolean, default: true,
+    onChange: () => ui.controls?.render?.({ reset: true })
+  });
   game.settings.register(MODULE_ID, "boards", {
     scope: "world", config: false, type: Object, default: { list: [] },
     onChange: onBoardsChange
@@ -76,7 +90,22 @@ Hooks.once("init", () => {
   });
 });
 
+/* Knopf in der linken Werkzeugleiste (nur SL, in den Moduleinstellungen abschaltbar) */
+Hooks.on("getSceneControlButtons", (controls) => {
+  if (!game.user.isGM) return;
+  let show = true;
+  try { show = game.settings.get(MODULE_ID, "showControl"); } catch { /* noch nicht registriert */ }
+  const group = controls?.tokens;
+  if (!show || !group?.tools) return;
+  group.tools.sbBoard = {
+    name: "sbBoard", title: t("app.title"), icon: "fa-solid fa-thumbtack",
+    order: Object.keys(group.tools).length, button: true, visible: true,
+    onChange: () => BoardApp.toggle()
+  };
+});
+
 Hooks.once("ready", () => {
+  lastGmKey = gmJournalKey();
   game.socket.on(SOCKET, onSocket);
   const share = getShare();
   lastShareKey = shareAppliesTo(game.user, share) ? shareKey(share) : "";
@@ -95,6 +124,46 @@ Hooks.on("userConnected", () => {
   if (game.user.isGM && BoardApp.instance?.pubOpen) BoardApp.instance.render();
 });
 
+/** SL: Bretter mit gesetztem Haken stehen samt Zetteln im Journal. */
+function addGmEntries(root) {
+  const boards = getBoards().filter(b => b.gmJournal);
+  if (!boards.length) return;
+  const list = root.querySelector(".directory-list") ?? root;
+  const frag = document.createDocumentFragment();
+  for (const b of boards) {
+    const entry = document.createElement("li");
+    entry.className = `sb-journal-entry${b.notes.length ? " sb-has-notes" : ""}`;
+    const label = b.place && SKINS[b.skin]?.plate ? b.place : b.name;
+    entry.innerHTML = `
+      <button type="button" class="sb-journal-open">
+        <span class="sb-journal-ico"><i class="fa-solid fa-thumbtack"></i></span>
+        <span class="sb-journal-text"><b>${esc(label)}</b><small>${esc(t("gmj.hint"))}</small></span>
+        <i class="fa-solid fa-chevron-right sb-journal-arrow"></i>
+      </button>`;
+    entry.querySelector("button").addEventListener("click", ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      BoardApp.open({ boardId: b.id });
+    });
+    if (b.notes.length) {
+      const sub = document.createElement("ul");
+      sub.className = "sb-journal-sub";
+      for (const n of [...b.notes].sort((x, y) => noteLabel(x).localeCompare(noteLabel(y)))) {
+        const li = document.createElement("li");
+        li.className = "sb-taken";
+        li.innerHTML = `<button type="button" class="sb-taken-open"><i class="fa-solid fa-scroll"></i><span>${esc(noteLabel(n))}</span></button>`;
+        li.querySelector("button").addEventListener("click", ev => {
+          ev.preventDefault(); ev.stopPropagation();
+          BoardApp.open({ boardId: b.id, noteId: n.id });
+        });
+        sub.append(li);
+      }
+      entry.append(sub);
+    }
+    frag.append(entry);
+  }
+  list.prepend(frag);
+}
+
 /* Im Journal: SL bekommt oben einen Button, Spieler sehen das veröffentlichte Brett als Eintrag ganz oben in der Liste. */
 Hooks.on("renderJournalDirectory", (app, html) => {
   const root = html instanceof HTMLElement ? html : html?.[0];
@@ -110,6 +179,7 @@ Hooks.on("renderJournalDirectory", (app, html) => {
       ?? root.querySelector(".directory-header")
       ?? root;
     header.append(btn);
+    addGmEntries(root);
     return;
   }
   const list = root.querySelector(".directory-list");

@@ -34,8 +34,10 @@ export function noteTextHTML(note) {
   const bs = (Number(note.bodySize) || BODY_DEFAULT.size) / 12;
   const align = note.titleAlign === "left" ? "left" : "center";
   const title = String(note.title ?? "").trim();
+  const hex = (v) => (typeof v === "string" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v.trim()) ? v.trim() : "");
+  const tc = hex(note.titleColor), bc = hex(note.bodyColor);
   return `
-    <div class="sb-text" lang="${lang()}" style="--sb-ts:${ts};--sb-bs:${bs};--sb-head:${tf};--sb-bodyf:${bf}">
+    <div class="sb-text" lang="${lang()}" style="--sb-ts:${ts};--sb-bs:${bs};--sb-head:${tf};--sb-bodyf:${bf}${tc ? `;--sb-tc:${tc}` : ""}${bc ? `;--sb-bc:${bc};--sb-bb:${bc}` : ""}">
       ${title ? `<h1 class="sb-title" data-part="title" style="text-align:${align}">${esc(title)}</h1>` : ""}
       <div class="sb-body" data-part="body">${sanitize(note.body ?? "")}</div>
     </div>`;
@@ -119,9 +121,9 @@ export function imageHTML(i, { editable = false, selected = false } = {}) {
     </div>`;
 }
 
-const DECO_RANK = { frame: 0, corners: 0, line: 1, ornate: 1, ink: 2, sign: 3 };
+const DECO_RANK = { corners: 0, line: 1, ornate: 1, ink: 2, sign: 3 };
 
-/** Zierelemente und Unterschriften: Rahmen liegen unten, Unterschriften oben. */
+/** Zierelemente und Unterschriften: Ecken liegen unten, Unterschriften oben. */
 export function decoLayer(note, { editable = false, selected = null } = {}) {
   const list = [...(note.deco ?? [])].sort((a, b) => (DECO_RANK[a.kind] ?? 1) - (DECO_RANK[b.kind] ?? 1));
   return list.map(d => decoHTML(d, { editable, selected: selected === d.id })).join("");
@@ -158,9 +160,7 @@ export function decoHTML(d, { editable = false, selected = false } = {}) {
       g("0 100%", `${L} ${T}`), g("0 100%", `${T} ${L}`), g("100% 100%", `${L} ${T}`), g("100% 100%", `${T} ${L}`)].join(",");
     return `<div ${attrs} style="${pos};width:${d.w}%;height:${d.h}%"><i class="sb-d-fill" style="background:${bg}"></i>${handle}</div>`;
   }
-  // frame
-  const th = d.style === "double" ? "calc(var(--t) * 3cqw)" : "calc(var(--t) * 1cqw)";
-  return `<div ${attrs} style="${pos};width:${d.w}%;height:${d.h}%"><i class="sb-d-fill" style="border:max(1px, ${th}) ${d.style} var(--c);border-radius:calc(${d.r} * 1cqw)"></i>${handle}</div>`;
+  return "";
 }
 
 export function sealHTML(seal) {

@@ -3,8 +3,9 @@
  * Board: { id, name, skin, place, coords: 2, notes: Note[] }
  * Note:  { id, template, paper, x, y, scale, rot, z, title, titleFont, titleSize, titleAlign, body, bodyFont, bodySize, seal, images, deco }
  * seal:  { id, x, y, size, icon, img, ix, iy, isz, ic }  (ix/iy = Versatz des Symbols, isz = Symbolgröße in %, ic = Symbolfarbe)
+ * titleColor / bodyColor: Hex-Farbe der Schrift oder "" (= Standardbraun der Vorlage)
  * name:  eigener Name des Zettels (Journal, Abgerissen-Liste); leer = Überschrift bzw. Vorlagenname
- * deco:  { id, kind: line|ornate|frame|corners|sign|ink, style, x, y, w, h, rot, color, t, r, opacity, text, font, sz, path, ar }
+ * deco:  { id, kind: line|ornate|corners|sign|ink, style, x, y, w, h, rot, color, t, r, opacity, text, font, sz, path, ar }
  *   title  = Überschrift (Klartext), body = Fließtext (bereinigtes HTML), Größen in pt (12 = Grundgröße)
  *   x, y   = Mittelpunkt in % des ganzen Brettbilds (coords 2; bis 0.2 in % der Bretterfläche)
  *   scale  = Zettelhöhe als Anteil der Brettbreite (frei per Ziehen)
@@ -155,6 +156,8 @@ export function normalizeNote(n) {
     titleFont: Object.hasOwn(FONTS, rest.titleFont) ? rest.titleFont : TITLE_DEFAULT.font,
     titleSize: pt(rest.titleSize, TITLE_DEFAULT.size, 8, 96),
     titleAlign: rest.titleAlign === "left" ? "left" : "center",
+    titleColor: safeColor(rest.titleColor, ""),
+    bodyColor: safeColor(rest.bodyColor, ""),
     body: sanitize(rest.body ?? ""),
     bodyFont: Object.hasOwn(FONTS, rest.bodyFont) ? rest.bodyFont : BODY_DEFAULT.font,
     bodySize: pt(rest.bodySize, BODY_DEFAULT.size, 6, 40),
@@ -186,7 +189,7 @@ export function newDeco(kind, extra = {}) {
   const K = DECO_KINDS[kind];
   return normalizeDeco({
     id: randomID(), kind, style: K?.styles[0], x: 50, y: 50, w: K?.w ?? 40, h: K?.h ?? 0, rot: 0,
-    color: INK_COLORS[0], t: kind === "ornate" ? 0.6 : 0.5, r: kind === "frame" ? 0 : 8, opacity: 90, ...extra
+    color: INK_COLORS[0], t: kind === "ornate" ? 0.6 : 0.5, r: 8, opacity: 90, ...extra
   });
 }
 

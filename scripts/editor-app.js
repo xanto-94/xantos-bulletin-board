@@ -1,6 +1,6 @@
 import {
   NOTE_ORDER, SEALS, SEAL_ORDER, SEAL_ICONS, FONTS, FONT_ORDER, noteImg, paperOf, CUSTOM, NOTES,
-  BLENDS, IMAGE_LOOKS, IMAGE_LOOK_ORDER, TITLE_SIZES, BODY_SIZES, SIGN_FONTS, SIGN_FONT_ORDER, INK_COLORS, EMB_COLORS, DECO_KINDS, DECO_GLYPHS
+  BLENDS, IMAGE_LOOKS, IMAGE_LOOK_ORDER, TITLE_SIZES, BODY_SIZES, SIGN_FONTS, SIGN_FONT_ORDER, INK_COLORS, TEXT_COLORS, EMB_COLORS, DECO_KINDS, DECO_GLYPHS
 } from "./skins.js";
 import { t } from "./i18n.js";
 import { noteHTML, noteTextHTML, fitText, sanitize, esc, imageFilter, textFromJSON, plainToHTML, decoHTML, sealHTML } from "./note.js";
@@ -9,10 +9,10 @@ import { getBoard, newNote, upsertNote, normalizeNote, newImage, normalizeImage,
 
 const { ApplicationV2 } = foundry.applications.api;
 
-const TABS = [["paper", "fa-scroll"], ["text", "fa-font"], ["seal", "fa-stamp"], ["deco", "fa-border-all"], ["sign", "fa-signature"], ["images", "fa-image"]];
-const DECO_TABS = { deco: ["line", "ornate", "frame", "corners"], sign: ["sign", "ink"] };
+const TABS = [["paper", "fa-scroll"], ["text", "fa-font"], ["seal", "fa-stamp"], ["sign", "fa-signature"], ["images", "fa-image"]];
+const DECO_TABS = { deco: ["line", "ornate", "corners"], sign: ["sign", "ink"] };
 const isDecoTab = (tab) => tab in DECO_TABS;
-const DECO_ICON = { line: "fa-minus", ornate: "fa-diamond", frame: "fa-square", corners: "fa-vector-square", sign: "fa-signature", ink: "fa-pen-nib" };
+const DECO_ICON = { line: "fa-minus", ornate: "fa-diamond", corners: "fa-vector-square", sign: "fa-signature", ink: "fa-pen-nib" };
 const FILTERS = [["opacity", 5, 100], ["sepia", 0, 100], ["gray", 0, 100], ["contrast", 40, 220], ["bright", 40, 180]];
 /** Formatierung des Fließtexts: [Befehl, fa-Icon, Tooltip-Schlüssel] */
 const BODY_TOOLS = [["bold", "fa-bold", "tool.bold"], ["italic", "fa-italic", "tool.italic"], "|",
@@ -46,6 +46,7 @@ export class NoteEditor extends ApplicationV2 {
       pickTemplate: NoteEditor._onPickTemplate,
       uploadPaper: NoteEditor._onUploadPaper,
       titleAlign: NoteEditor._onTitleAlign,
+      textColor: NoteEditor._onTextColor,
       loadJson: NoteEditor._onLoadJson,
       pickSeal: NoteEditor._onPickSeal,
       pickIcon: NoteEditor._onPickIcon,
@@ -216,6 +217,7 @@ export class NoteEditor extends ApplicationV2 {
               <button type="button" class="${d.titleAlign !== "left" ? "on" : ""}" data-action="titleAlign" data-align="center" data-tooltip="${esc(t("tool.center"))}" aria-label="${esc(t("tool.center"))}"><i class="fa-solid fa-align-center"></i></button>
             </div>
           </div>
+          ${this._textColorHTML("title", d.titleColor)}
         </div>
 
         <div class="sb-tgroup">
@@ -227,6 +229,7 @@ export class NoteEditor extends ApplicationV2 {
             ${this._fontSelect("bodyFont", d.bodyFont)}
             ${this._sizeSelect("bodySize", d.bodySize, BODY_SIZES)}
           </div>
+          ${this._textColorHTML("body", d.bodyColor)}
           <div class="sb-rte">
             <div class="sb-rte-bar" role="toolbar">${tools}</div>
             <div class="sb-rte-area" contenteditable="true" spellcheck="true" lang="${esc(game.i18n?.lang ?? "de")}" data-placeholder="${esc(t("editor.bodyPh"))}">${sanitize(d.body)}</div>
@@ -313,16 +316,40 @@ export class NoteEditor extends ApplicationV2 {
   _swatchesHTML(current, action = "decoColor", field = "d-color") {
     const cur = String(current ?? "").toLowerCase();
     return `<div class="sb-swatches">
-      ${INK_COLORS.map(c => `<button type="button" class="sb-swatch ${cur === c ? "on" : ""}" style="background:${c}" data-action="${action}" data-color="${c}" aria-label="${c}"></button>`).join("")}
-      <input type="color" class="sb-colorpick" data-field="${field}" value="${/^#[0-9a-f]{6}$/i.test(cur) ? cur : "#2a1a0e"}" aria-label="${esc(t("editor.deco.color"))}">
+      ${INK_COLORS.map((c, i) => `<button type="button" class="sb-swatch ${cur === c ? "on" : ""}" style="background:${c}" data-action="${action}" data-color="${c}" data-tooltip="${esc(t(["color.brown", "color.ink", "color.blood"][i]))}" aria-label="${c}"></button>`).join("")}
+      <input type="color" class="sb-colorpick ${cur && !INK_COLORS.includes(cur) ? "on" : ""}" data-field="${field}" value="${/^#[0-9a-f]{6}$/i.test(cur) ? cur : "#2a1a0e"}" aria-label="${esc(t("editor.deco.color"))}">
     </div>`;
+  }
+
+  /** Farbwahl für Überschrift / Fließtext: Braun (Standard), Tinte, Blut, freie Farbe. */
+  _textColorHTML(part, current) {
+    const cur = String(current ?? "").toLowerCase();
+    const preset = TEXT_COLORS.some(x => x.v === cur);
+    return `<div class="sb-tcolor" data-tcolor="${part}">
+      <span>${esc(t("editor.textColor"))}</span>
+      <div class="sb-swatches">
+        ${TEXT_COLORS.map((x, i) => `<button type="button" class="sb-swatch ${cur === x.v ? "on" : ""}" style="background:${x.c}" data-action="textColor" data-part="${part}" data-color="${x.v}" data-tooltip="${esc(t(["color.brown", "color.ink", "color.blood"][i]))}" aria-label="${esc(t(["color.brown", "color.ink", "color.blood"][i]))}"></button>`).join("")}
+        <input type="color" class="sb-colorpick ${cur && !preset ? "on" : ""}" data-field="${part}ColorPick" value="${/^#[0-9a-f]{6}$/i.test(cur) ? cur : "#3d1607"}" data-tooltip="${esc(t("color.custom"))}" aria-label="${esc(t("color.custom"))}">
+      </div>
+    </div>`;
+  }
+
+  /** Markierung der Farbfelder nach einer Auswahl aktualisieren (ohne den Reiter neu zu bauen). */
+  _markTextColor(part) {
+    const box = this.element?.querySelector(`[data-tcolor="${part}"]`);
+    if (!box) return;
+    const cur = String(this.draft[`${part}Color`] ?? "").toLowerCase();
+    const preset = TEXT_COLORS.some(x => x.v === cur);
+    for (const b of box.querySelectorAll(".sb-swatch")) b.classList.toggle("on", b.dataset.color === cur);
+    const pick = box.querySelector(".sb-colorpick");
+    pick?.classList.toggle("on", !!cur && !preset);
+    if (pick && /^#[0-9a-f]{6}$/i.test(cur)) pick.value = cur;
   }
 
   _decoSample(kind) {
     const sty = "stroke:currentColor;fill:none;stroke-width:2;vector-effect:non-scaling-stroke";
     if (kind === "line") return `<svg viewBox="0 0 34 14"><path d="M2 7H32" style="${sty}"/></svg>`;
     if (kind === "ornate") return `<svg viewBox="0 0 34 14"><path d="M2 7H12M22 7H32" style="${sty}"/><path d="M17 3L21 7L17 11L13 7Z" fill="currentColor"/></svg>`;
-    if (kind === "frame") return `<svg viewBox="0 0 34 14"><rect x="3" y="2" width="28" height="10" rx="1" style="${sty}"/></svg>`;
     return `<svg viewBox="0 0 34 14"><path d="M3 6V2H8M26 2H31V6M31 8V12H26M8 12H3V8" style="${sty}"/></svg>`;
   }
 
@@ -379,9 +406,8 @@ export class NoteEditor extends ApplicationV2 {
       parts.push(`<div class="sb-seg-row">${K.styles.map(st => `<button type="button" class="sb-pill ${x.style === st ? "on" : ""}" data-action="decoStyle" data-style="${st}">${x.kind === "ornate" ? `${DECO_GLYPHS[st]} ` : ""}${esc(t(`editor.style.${st}`))}</button>`).join("")}</div>`);
     }
     if (x.kind !== "sign") parts.push(sl("d-w", t("editor.deco.width"), Math.round(x.w), 3, x.kind === "ink" ? 120 : 130, "%"));
-    if (x.kind === "frame" || x.kind === "corners") parts.push(sl("d-h", t("editor.deco.height"), Math.round(x.h), 3, 130, "%"));
+    if (x.kind === "corners") parts.push(sl("d-h", t("editor.deco.height"), Math.round(x.h), 3, 130, "%"));
     parts.push(sl("d-t", t("editor.deco.thickness"), Math.round(x.t * 10), 1, 40));
-    if (x.kind === "frame") parts.push(sl("d-r", t("editor.deco.radius"), Math.round(x.r), 0, 40));
     if (x.kind === "corners") parts.push(sl("d-r", t("editor.deco.cornerLen"), Math.round(x.r), 2, 40));
     parts.push(sl("d-rot", t("editor.deco.rotation"), Math.round(x.rot), -180, 180, "°"));
     parts.push(sl("d-opacity", t("editor.deco.opacity"), Math.round(x.opacity), 10, 100, "%"));
@@ -575,6 +601,12 @@ export class NoteEditor extends ApplicationV2 {
     if (out) out.textContent = `${el.value}${el.dataset.unit ?? ""}`;
     const d = this.draft;
     if (f === "name") { d.name = el.value; return; }
+    if (f === "titleColorPick" || f === "bodyColorPick") {
+      const part = f === "titleColorPick" ? "title" : "body";
+      d[`${part}Color`] = el.value.toLowerCase();
+      this._markTextColor(part);
+      return this._refreshPreview();
+    }
     if (f === "title") { d.title = el.value; return this._refreshPreview(); }
     if (f === "titleFont" || f === "bodyFont") {
       d[f] = el.value;
@@ -629,6 +661,52 @@ export class NoteEditor extends ApplicationV2 {
     return block && area.contains(block) && block !== area ? block : null;
   }
 
+  /** Alle Absätze, die von der Markierung berührt werden (ohne Markierung: der Absatz am Cursor). */
+  _selectedBlocks() {
+    const area = this.bodyEl;
+    const sel = window.getSelection();
+    if (area && sel?.rangeCount && area.contains(sel.anchorNode)) this._wrapLoose(sel.getRangeAt(0));
+    const first = this._currentBlock(); // legt im leeren Feld einen Absatz an
+    if (!area || !sel?.rangeCount || sel.isCollapsed) return first ? [first] : [];
+    const range = sel.getRangeAt(0);
+    // Endet die Markierung ganz am Anfang eines Absatzes (Dreifachklick), gehört er nicht dazu
+    const endsAtStart = (el) => {
+      if (!el.contains(range.endContainer) || el.contains(range.startContainer)) return false;
+      const r = document.createRange();
+      r.setStart(el, 0);
+      r.setEnd(range.endContainer, range.endOffset);
+      return !r.toString() && !r.cloneContents().querySelector?.("img,hr,br");
+    };
+    const list = [...area.children].filter(el => /^(P|H1|H2|H3|DIV)$/.test(el.tagName) && range.intersectsNode(el) && !endsAtStart(el));
+    return list.length ? list : (first ? [first] : []);
+  }
+
+  /**
+   * Lose Inhalte direkt im Textfeld (Text, <b>, <br> … ohne Absatz, z. B. die erste getippte Zeile)
+   * in Absätze packen, soweit die Markierung sie berührt – sonst ließen sie sich nicht ausrichten.
+   */
+  _wrapLoose(range) {
+    const area = this.bodyEl;
+    const sel = window.getSelection();
+    const loose = (n) => n.nodeType === Node.TEXT_NODE || (n.nodeType === Node.ELEMENT_NODE && !/^(P|H1|H2|H3|DIV|HR)$/.test(n.tagName));
+    const runs = [];
+    let run = [];
+    for (const n of [...area.childNodes]) {
+      if (loose(n)) run.push(n);
+      else { if (run.length) runs.push(run); run = []; }
+    }
+    if (run.length) runs.push(run);
+    const todo = runs.filter(r => r.some(n => range.intersectsNode(n)) && r.some(n => n.textContent.trim() || n.nodeName === "IMG"));
+    if (!todo.length) return;
+    const saved = [sel.anchorNode, sel.anchorOffset, sel.focusNode, sel.focusOffset];
+    for (const r of todo) {
+      const p = document.createElement("p");
+      r[0].before(p);
+      p.append(...r);
+    }
+    try { if (saved[0] !== area && saved[2] !== area) sel.setBaseAndExtent(...saved); } catch { /* Auswahl bleibt, wie sie ist */ }
+  }
+
   /** Formatierungsknöpfe zeigen, was an der Cursorstelle gilt. */
   _updateTools() {
     const root = this.element;
@@ -653,8 +731,7 @@ export class NoteEditor extends ApplicationV2 {
         document.execCommand(cmd);
         break;
       case "left": case "center": {
-        const b = this._currentBlock();
-        if (b) { b.classList.remove("sb-left", "sb-center"); b.classList.add(`sb-${cmd}`); }
+        for (const b of this._selectedBlocks()) { b.classList.remove("sb-left", "sb-center"); b.classList.add(`sb-${cmd}`); }
         break;
       }
       case "hr":
@@ -788,13 +865,12 @@ export class NoteEditor extends ApplicationV2 {
   /* ---------------- Zierde & Unterschriften ---------------- */
 
   _selectDeco(id, { swap = true } = {}) {
+    const kind = this.draft.deco.find(d => d.id === id)?.kind;
+    // Linien/Ornamente/Ecken aus alten Zetteln haben keinen eigenen Reiter mehr (nur Unterschriften) → nicht auswählbar
+    if (kind && kind !== "sign" && kind !== "ink") return;
     this.selDeco = id;
     for (const el of this.element.querySelectorAll(".sb-ed-note .sb-deco")) el.classList.toggle("selected", el.dataset.deco === id);
-    const kind = this.deco?.kind;
-    if (kind) {
-      const home = kind === "sign" || kind === "ink" ? "sign" : "deco";
-      if (this.tab !== home) this.tab = home;
-    }
+    if (kind && this.tab !== "sign") this.tab = "sign";
     if (swap) this._swapTab();
   }
 
@@ -849,9 +925,10 @@ export class NoteEditor extends ApplicationV2 {
     const paper = this.paperEl;
     el.addEventListener("pointerdown", ev => {
       if (ev.button !== 0 || !isDecoTab(this.tab)) return;
-      ev.preventDefault();
       const d = this.draft.deco.find(x => x.id === el.dataset.deco);
-      if (!d) return;
+      // alte Zierde (Linie/Ornament/Ecken) bleibt erhalten, ist aber nicht mehr bearbeitbar
+      if (!d || !DECO_TABS[this.tab].includes(d.kind)) return;
+      ev.preventDefault();
       const wasSel = this.selDeco === d.id;
       if (!wasSel) this._selectDeco(d.id);
       const live = paper.querySelector(`.sb-deco[data-deco="${CSS.escape(d.id)}"]`) ?? el;
@@ -867,7 +944,7 @@ export class NoteEditor extends ApplicationV2 {
         if (resize) {
           const dx = e.clientX - cx, dy = e.clientY - cy;
           const lx = Math.abs(dx * cos + dy * sin), ly = Math.abs(-dx * sin + dy * cos);
-          if (d.kind === "frame" || d.kind === "corners") {
+          if (d.kind === "corners") {
             let w = 2 * lx / rect.width * 100, h = 2 * ly / rect.height * 100;
             if (e.shiftKey && start.w && start.h) { const k = Math.max(w / start.w, h / start.h); w = start.w * k; h = start.h * k; }
             d.w = Math.round(Math.min(130, Math.max(3, w)) * 10) / 10;
@@ -1058,6 +1135,13 @@ export class NoteEditor extends ApplicationV2 {
       this.draft.paper = { img: path, w, h };
       this.render();
     });
+  }
+
+  static _onTextColor(event, target) {
+    const part = target.dataset.part === "body" ? "body" : "title";
+    this.draft[`${part}Color`] = target.dataset.color || "";
+    this._markTextColor(part);
+    this._refreshPreview();
   }
 
   static _onTitleAlign(event, target) {

@@ -88,7 +88,9 @@ export const SIGN_FONT_ORDER = Object.keys(SIGN_FONTS);
 export const SIGN_FONT_SCALE = { vibes: 1, apple: 0.62, aurore: 0.85, delafield: 1.25, hand: 0.9 }; // gleicht optische Größe an
 
 /** Tintenfarben für Unterschrift & Zierde */
-export const INK_COLORS = ["#2a1a0e", "#1b2a5c", "#6b1d1d", "#111111", "#7a5a12", "#ffffff"];
+export const INK_COLORS = ["#2a1a0e", "#1b2a5c", "#8a1414"]; // Braun (Standard), Tinte, Blut
+/** Textfarben: leer = Standardbraun der Vorlage */
+export const TEXT_COLORS = [{ v: "", c: "#3d1607" }, { v: "#1b2a5c", c: "#1b2a5c" }, { v: "#8a1414", c: "#8a1414" }];
 /** Farben für Symbole auf Siegeln */
 export const EMB_COLORS = ["#f3d27a", "#e8e8e8", "#ffffff", "#1a1208", "#8a1c1c", "#2b4a8a"];
 
@@ -96,7 +98,6 @@ export const EMB_COLORS = ["#f3d27a", "#e8e8e8", "#ffffff", "#1a1208", "#8a1c1c"
 export const DECO_KINDS = {
   line: { w: 60, h: 0, styles: ["solid", "double", "dashed", "dotted"] },
   ornate: { w: 60, h: 0, styles: ["diamond", "star", "flower", "cross"] },
-  frame: { w: 84, h: 84, styles: ["solid", "double", "dashed", "dotted"] },
   corners: { w: 84, h: 84, styles: ["solid"] }
 };
 export const DECO_GLYPHS = { diamond: "◆", star: "✦", flower: "❀", cross: "✚" };

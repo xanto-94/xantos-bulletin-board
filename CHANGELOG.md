@@ -2,6 +2,14 @@
 
 [Deutsch](CHANGELOG.de.md)
 
+## 0.8.0
+- **Alignment** now applies to every paragraph in the selection, not only the first one.
+- **Text colors:** headline and body each get a color: brown (default), ink blue, blood red, or a custom color.
+- **Color swatches** are rounded squares everywhere. Signatures use the same three colors plus a custom one.
+- **Removed:** the "Frames" tab (lines, ornamental lines, frames, corners). Existing decorations on notes are kept. Signatures stay.
+- **GM:** a button in the left scene toolbar opens the board (can be switched off in the module settings).
+- **GM journal:** tick "Show in Journal (GM only)" in the board toolbar to list the board and its notes in your Journal.
+
 ## 0.7.0
 - **Notes have a name** (editor → Text → "Note name"). It is shown in the players' journal and for torn-off notes. Empty = headline, then template name.
 - **Board window (GM)** fits the screen: it opens small enough to keep the header and toolbar visible and is moved back if it sticks out at the top or bottom.
